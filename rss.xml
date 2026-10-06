@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>The Digital Corner</title>
+    <link>https://YOUR-GITHUB-USERNAME.github.io/</link>
+    <description>Independent articles about technology, AI, gaming and the internet.</description>
+    <language>en-nz</language>
+    <item>
+      <title>I Built a Tiny AI on My Own PC</title>
+      <link>https://YOUR-GITHUB-USERNAME.github.io/articles/my-first-ai.html</link>
+      <guid>https://YOUR-GITHUB-USERNAME.github.io/articles/my-first-ai.html</guid>
+      <description>A first-hand experiment with training a small language model locally.</description>
+    </item>
+  </channel>
+</rss>
