@@ -1,0 +1,11 @@
+{
+  "name":"Space Cockpit Fidget",
+  "short_name":"Space Cockpit",
+  "start_url":"./",
+  "display":"standalone",
+  "orientation":"landscape",
+  "background_color":"#030711",
+  "theme_color":"#050914",
+  "description":"A tactile sci-fi space cockpit fidget app.",
+  "icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}

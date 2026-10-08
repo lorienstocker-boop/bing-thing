@@ -1,77 +1,108 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <title>The Cool Corner — Technology, AI, Gaming & Internet</title>
-
-  <meta name="description" content="The Cool Corner publishes independent stories, explainers, opinions and interesting news about technology, AI, gaming and the internet.">
-
-  <meta name="robots" content="index, follow">
-
-  <link rel="canonical" href="https://lorienstocker-boop.github.io/">
-
-  <link rel="alternate" type="application/rss+xml"
-        title="The Cool Corner RSS Feed"
-        href="rss.xml">
-
-  <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#050914">
+<meta name="description" content="A tactile sci-fi space cockpit fidget app.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>Space Cockpit Fidget</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;min-height:100%;background:#030711;color:#dcecff;font-family:Arial,sans-serif;overflow:hidden;touch-action:none}
+button,input{font:inherit}
+#app{width:100vw;height:100dvh;display:flex;flex-direction:column;padding:10px;gap:8px}
+.panel{border:1px solid #30445e;background:linear-gradient(145deg,#0b1422,#050a13);border-radius:18px;box-shadow:inset 0 0 30px #0008,0 5px 20px #0008}
+#top{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#screen{position:relative;overflow:hidden;min-height:170px;background:radial-gradient(circle at 50% 55%,#112a55 0,#06101f 48%,#02050b 100%)}
+#screen canvas{position:absolute;inset:0;width:100%;height:100%}
+.label{position:absolute;z-index:2;top:12px;font:700 12px monospace;color:#9fb3c9;letter-spacing:.08em}
+.left{left:14px}.right{right:14px;color:#70d7ff}
+#reticle{position:absolute;left:50%;top:55%;width:64px;height:64px;transform:translate(-50%,-50%);border:2px solid #62d8ff;border-radius:50%;opacity:.8}
+#reticle:before,#reticle:after{content:"";position:absolute;background:#62d8ff}
+#reticle:before{width:90px;height:1px;left:-15px;top:30px}
+#reticle:after{height:90px;width:1px;top:-15px;left:30px}
+#rightPanel{padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.btn{min-height:46px;border-radius:10px;border:1px solid #40536b;background:#111c2b;color:#d9e8f7;font-weight:700;font-size:11px;box-shadow:inset 0 -3px #080d15}
+.btn:active,.btn.on{background:#244254;border-color:#66d9ff;color:#bcefff;transform:translateY(2px)}
+#bottom{height:min(38vh,300px);display:grid;grid-template-columns:1.15fr .75fr 1.15fr;gap:10px;padding:10px}
+.control{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}
+.caption{font:700 11px monospace;color:#71859b;letter-spacing:.08em;margin-bottom:7px}
+#stick{width:min(30vw,190px);height:min(30vw,190px);max-height:190px;max-width:190px;border-radius:50%;background:#07101c;border:3px solid #354b63;position:relative;box-shadow:inset 0 0 25px #000;touch-action:none}
+#knob{position:absolute;width:56px;height:56px;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;background:linear-gradient(#b8c2ca,#4b5965);border:2px solid #dce4ea;box-shadow:0 7px 15px #000;pointer-events:none}
+#throttle{width:100%;max-width:210px;accent-color:#6edbff}
+#throttleValue{font:bold 18px monospace;color:#73d9ff;margin-top:8px}
+.status{font:11px monospace;color:#8194a8;line-height:1.8;text-align:center}
+@media(max-width:650px){
+ #top{grid-template-columns:1fr;height:58vh;flex:none}
+ #screen{display:none}
+ #rightPanel{padding:8px}
+ #bottom{height:42vh;grid-template-columns:1fr 1fr 1fr;padding:7px;gap:6px}
+ .btn{min-height:42px;font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
 </head>
 <body>
-<header class="site-header">
-  <div class="wrap header-inner">
-    <a class="logo" href="index.html">THE COOL CORNER</a>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
+<main id="app">
+<section id="top">
+ <div id="screen" class="panel">
+  <canvas id="stars"></canvas>
+  <div class="label left">FLIGHT DECK // SECTOR 07</div>
+  <div class="label right" id="readout">X +0.00 / Y +0.00</div>
+  <div id="reticle"></div>
+ </div>
+ <div id="rightPanel" class="panel">
+  <div class="grid" id="buttons"></div>
+  <div class="status" id="status">ENGINE 35% · STABILITY 100% · HULL 100%</div>
+ </div>
+</section>
+<section id="bottom" class="panel">
+ <div class="control">
+  <div class="caption">FLIGHT STICK</div>
+  <div id="stick" role="slider" aria-label="Flight joystick" tabindex="0"><div id="knob"></div></div>
+ </div>
+ <div class="control">
+  <div class="caption">THRUSTER</div>
+  <input id="throttle" type="range" min="0" max="100" value="35" orient="vertical" aria-label="Thruster">
+  <div id="throttleValue">35%</div>
+ </div>
+ <div class="control">
+  <div class="caption">SYSTEMS</div>
+  <div class="grid" style="width:100%">
+   <button class="btn" data-b="POWER">POWER</button>
+   <button class="btn" data-b="LIGHTS">LIGHTS</button>
+   <button class="btn" data-b="COMMS">COMMS</button>
+   <button class="btn" data-b="SCAN">SCAN</button>
+   <button class="btn" data-b="NAV">NAV</button>
+   <button class="btn" data-b="AUTO">AUTO</button>
   </div>
-</header>
-
-<main class="wrap">
-  <section class="hero">
-    <p class="eyebrow">INDEPENDENT TECHNOLOGY PUBLICATION</p>
-    <h1>just cool stories and news.</h1>
-    <p>Original experiments, explainers, opinions and interesting things from the world.</p>
-  </section>
-
-  <section>
-    <div class="section-heading">
-      <h2>Latest articles</h2>
-    </div>
-
-    <article class="article-card">
-    <h2>Everyone Now Loves Skibidi Toilet — Here's Why</h2>
-    <p>
-        A look at how Skibidi Toilet became such a huge internet phenomenon.
-    </p>
-    <a href="https://medium.com/@lorienstocker/everyone-now-loves-skibidi-toilet-heres-why-d3323f655dc2"
-       target="_blank"
-       rel="noopener noreferrer">
-        Read on Medium →
-    </a>
-</article>
-
-      <article class="card">
-        <div class="card-body">
-          <span class="tag">Technology</span>
-          <h3>More articles coming soon</h3>
-          <p>New original articles will appear here as they are published.</p>
-        </div>
-    </article>
-  </section>
+ </div>
+</section>
 </main>
-
-<footer>
-  <div class="wrap footer-inner">
-    <span>© 2026 The Cool Corner</span>
-    <span>
-      <a href="privacy.html">Privacy</a> ·
-      <a href="terms.html">Terms</a>
-    </span>
-  </div>
-</footer>
+<script>
+(()=>{
+const active=new Set(), buttons=["ARM","NAV","AUTO","AUX 1","AUX 2","▲","●","▼","SCAN","COMMS","LIGHTS"];
+const box=document.getElementById("buttons");
+buttons.forEach(name=>{const b=document.createElement("button");b.className="btn";b.textContent=name;b.dataset.b=name;box.appendChild(b)});
+document.querySelectorAll(".btn").forEach(b=>b.addEventListener("pointerdown",()=>{const n=b.dataset.b;if(active.has(n))active.delete(n);else active.add(n);b.classList.toggle("on");}));
+const readout=document.getElementById("readout"),knob=document.getElementById("knob"),stick=document.getElementById("stick"),ret=document.getElementById("reticle");
+let joyX=0,joyY=0,drag=false;
+function setJoy(e){const r=stick.getBoundingClientRect(),lim=r.width/2-31;joyX=Math.max(-1,Math.min(1,(e.clientX-(r.left+r.width/2))/lim));joyY=Math.max(-1,Math.min(1,(e.clientY-(r.top+r.height/2))/lim));knob.style.left=(50+joyX*43)+"%";knob.style.top=(50+joyY*43)+"%";readout.textContent=`X ${joyX>=0?"+":""}${joyX.toFixed(2)} / Y ${(-joyY)>=0?"+":""}${(-joyY).toFixed(2)}`;ret.style.transform=`translate(-50%,-50%) translate(${joyX*42}px,${joyY*42}px)`}
+function reset(){drag=false;joyX=joyY=0;knob.style.left="50%";knob.style.top="50%";readout.textContent="X +0.00 / Y +0.00";ret.style.transform="translate(-50%,-50%)"}
+stick.addEventListener("pointerdown",e=>{drag=true;stick.setPointerCapture(e.pointerId);setJoy(e)});
+stick.addEventListener("pointermove",e=>{if(drag)setJoy(e)});
+stick.addEventListener("pointerup",reset);stick.addEventListener("pointercancel",reset);
+const throttle=document.getElementById("throttle"),tv=document.getElementById("throttleValue"),status=document.getElementById("status");
+throttle.addEventListener("input",()=>{tv.textContent=throttle.value+"%";status.textContent=`ENGINE ${throttle.value}% · STABILITY 100% · HULL 100%`});
+const canvas=document.getElementById("stars"),ctx=canvas.getContext("2d"),stars=[];
+function resize(){const r=canvas.getBoundingClientRect(),d=devicePixelRatio||1;canvas.width=r.width*d;canvas.height=r.height*d;ctx.setTransform(d,0,0,d,0,0);if(!stars.length)for(let i=0;i<90;i++)stars.push({x:Math.random(),y:Math.random(),s:.5+Math.random()*1.7,v:.00015+Math.random()*.00035})}
+function draw(){const w=canvas.clientWidth,h=canvas.clientHeight;ctx.clearRect(0,0,w,h);for(const s of stars){s.x-=s.v;if(s.x<0)s.x=1;ctx.globalAlpha=.35+Math.random()*.55;ctx.fillStyle="#fff";ctx.fillRect(s.x*w,s.y*h,s.s,s.s)}ctx.globalAlpha=1;requestAnimationFrame(draw)}
+addEventListener("resize",resize);resize();draw();
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+})();
+</script>
 </body>
 </html>
